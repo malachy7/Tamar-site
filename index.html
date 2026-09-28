@@ -259,6 +259,12 @@
     aspect-ratio:4/5;
     background:linear-gradient(160deg, #FBF3EE 0%, #F3E3DE 55%, #EAD3CB 100%);
     border-radius:2px;
+    overflow:hidden;
+  }
+  .frame img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
   }
   .frame .corner{
     position:absolute;
@@ -334,6 +340,11 @@
     position:relative;
     border-radius:2px;
     overflow:hidden;
+  }
+  .pf-item img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
   }
   .pf-item .corner{
     position:absolute; width:18px; height:18px;
@@ -549,17 +560,11 @@
 <section id="about">
   <div class="wrap about">
     <div class="frame">
+      <img src="WhatsApp%20Image%202026-09-28%20at%2022.04.55.jpeg" alt="תמר דוידוב">
       <div class="corner tl"></div>
       <div class="corner tr"></div>
       <div class="corner bl"></div>
       <div class="corner br"></div>
-      <div class="cam-icon">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#A06559" stroke-width="1.2">
-          <rect x="3" y="7" width="18" height="13" rx="1.5"/>
-          <path d="M8 7l1.5-2.5h5L16 7"/>
-          <circle cx="12" cy="13.5" r="3.5"/>
-        </svg>
-      </div>
     </div>
     <div class="about-text">
       <span class="section-head kicker" style="display:block;margin-bottom:14px;">מי אני</span>
@@ -606,10 +611,10 @@
       <h2>עבודות נבחרות</h2>
     </div>
     <div class="portfolio-grid">
-      <div class="pf-item tall pf-tone-1"><div class="corner tl"></div><div class="corner br"></div></div>
-      <div class="pf-item pf-tone-2"><div class="corner tl"></div><div class="corner br"></div></div>
-      <div class="pf-item pf-tone-3"><div class="corner tl"></div><div class="corner br"></div></div>
-      <div class="pf-item pf-tone-4"><div class="corner tl"></div><div class="corner br"></div></div>
+      <div class="pf-item tall"><img src="WhatsApp%20Image%202026-09-28%20at%2022.05.22.jpeg" alt="עבודה נבחרת"><div class="corner tl"></div><div class="corner br"></div></div>
+      <div class="pf-item"><img src="WhatsApp%20Image%202026-09-28%20at%2022.05.53%20%281%29.jpeg" alt="עבודה נבחרת"><div class="corner tl"></div><div class="corner br"></div></div>
+      <div class="pf-item"><img src="WhatsApp%20Image%202026-09-28%20at%2022.05.53.jpeg" alt="עבודה נבחרת"><div class="corner tl"></div><div class="corner br"></div></div>
+      <div class="pf-item"><img src="WhatsApp%20Image%202026-09-28%20at%2022.05.54.jpeg" alt="עבודה נבחרת"><div class="corner tl"></div><div class="corner br"></div></div>
       <div class="pf-item pf-tone-5"><div class="corner tl"></div><div class="corner br"></div></div>
     </div>
     <p class="portfolio-note">* המסגרות כאן הן placeholder לתמונות — יש להחליף אותן בתמונות אמיתיות מתיק העבודות.</p>
