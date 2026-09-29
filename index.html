@@ -747,19 +747,60 @@
 </footer>
 
 <script>
-  // The form now submits itself directly to FormSubmit as a normal page POST
-  // (no fetch/JS involved in sending) so it can't be blocked by ad-blockers
-  // or CORS restrictions. After FormSubmit processes it, it redirects the
-  // browser back here with ?sent=1 — we just detect that and show a message.
+  // Sends the form in the background (no page reload). If the background
+  // request fails for any reason, it falls back to a normal form submit,
+  // so a lead is never lost.
+  const form = document.getElementById('contact-form');
   const successBox = document.getElementById('form-success');
+  const submitBtn = form.querySelector('.submit-btn');
+
+  function showMessage(text, isError){
+    successBox.textContent = text;
+    successBox.classList.remove('error');
+    successBox.classList.add('show');
+    if (isError) successBox.classList.add('error');
+  }
+
+  // Fallback path: page came back from a normal submit with ?sent=1
   const params = new URLSearchParams(window.location.search);
   if (params.get('sent') === '1') {
-    successBox.textContent = 'תודה! הפנייה התקבלה, ואחזור אליך בהקדם.';
-    successBox.classList.add('show');
-    params.delete('sent');
-    const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + '#contact';
-    window.history.replaceState({}, '', cleanUrl);
+    showMessage('תודה! הפנייה התקבלה, ואחזור אליך בהקדם.');
+    window.history.replaceState({}, '', window.location.pathname + '#contact');
   }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'שולח...';
+
+    const data = new FormData(form);
+    data.delete('redirect'); // background send doesn't need the redirect
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: data,
+        signal: controller.signal
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'send failed');
+      form.reset();
+      showMessage('תודה! הפנייה התקבלה, ואחזור אליך בהקדם.');
+    } catch (err) {
+      // Background send failed: submit the normal way instead
+      form.submit();
+      return;
+    } finally {
+      clearTimeout(timer);
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
+  });
 </script>
 
 </body>
