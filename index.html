@@ -681,15 +681,19 @@
       </div>
     </div>
     <div class="contact-form-card">
-      <form id="contact-form">
+      <form id="contact-form" action="https://formsubmit.co/Tamardavidov.ugc@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="פנייה חדשה מהאתר">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://tamardavidovsocial.co.il/?sent=1#contact">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
         <div class="field-row">
           <div>
             <label for="name">שם מלא</label>
-            <input id="name" name="name" type="text" placeholder="השם שלך" required>
+            <input id="name" name="שם" type="text" placeholder="השם שלך" required>
           </div>
           <div>
             <label for="phone">טלפון</label>
-            <input id="phone" name="phone" type="tel" placeholder="050-000-0000" required>
+            <input id="phone" name="טלפון" type="tel" placeholder="050-000-0000" required>
           </div>
         </div>
         <div>
@@ -699,28 +703,28 @@
         <div class="field-row">
           <div>
             <label for="service">סוג השירות המבוקש</label>
-            <select id="service" name="service">
+            <select id="service" name="סוג שירות">
               <option value="">בחר/י אפשרות</option>
-              <option value="wedding">ליווי לחתונה</option>
-              <option value="henna">סושיאל חינה/הפרשת חלה</option>
-              <option value="barmitzvah">בר/בת מצווה</option>
-              <option value="family">צילומי משפחה/הריון</option>
-              <option value="couple">צילומי זוגיות/Save the Date</option>
+              <option value="ליווי לחתונה">ליווי לחתונה</option>
+              <option value="סושיאל חינה/הפרשת חלה">סושיאל חינה/הפרשת חלה</option>
+              <option value="בר/בת מצווה">בר/בת מצווה</option>
+              <option value="צילומי משפחה/הריון">צילומי משפחה/הריון</option>
+              <option value="צילומי זוגיות/Save the Date">צילומי זוגיות/Save the Date</option>
             </select>
           </div>
           <div>
             <label for="budget">תקציב משוער</label>
-            <select id="budget" name="budget">
+            <select id="budget" name="תקציב משוער">
               <option value="">בחר/י אפשרות</option>
-              <option value="under1000">עד 1,000 ₪</option>
-              <option value="1000-2000">1,000–2,000 ₪</option>
-              <option value="3000plus">3,000 ₪ ומעלה</option>
+              <option value="עד 1,000 ₪">עד 1,000 ₪</option>
+              <option value="1,000–2,000 ₪">1,000–2,000 ₪</option>
+              <option value="3,000 ₪ ומעלה">3,000 ₪ ומעלה</option>
             </select>
           </div>
         </div>
         <div>
           <label for="message">ספר לי על האירוע</label>
-          <textarea id="message" name="message" placeholder="תאר/י את האירוע..."></textarea>
+          <textarea id="message" name="הודעה" placeholder="תאר/י את האירוע..."></textarea>
         </div>
         <button type="submit" class="submit-btn">שליחת פנייה</button>
         <p class="form-note">הפרטים נשלחים ישירות לתמר, ואף אחד אחר לא רואה אותם.</p>
@@ -742,55 +746,19 @@
 </footer>
 
 <script>
-  const form = document.getElementById('contact-form');
+  // The form now submits itself directly to FormSubmit as a normal page POST
+  // (no fetch/JS involved in sending) so it can't be blocked by ad-blockers
+  // or CORS restrictions. After FormSubmit processes it, it redirects the
+  // browser back here with ?sent=1 — we just detect that and show a message.
   const successBox = document.getElementById('form-success');
-  const submitBtn = form.querySelector('.submit-btn');
-  const ENDPOINT = 'https://formsubmit.co/ajax/Tamardavidov.ugc@gmail.com';
-
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    successBox.classList.remove('show','error');
-
-    const serviceSelect = document.getElementById('service');
-    const budgetSelect = document.getElementById('budget');
-    const nameVal = document.getElementById('name').value.trim();
-
-    const payload = {
-      'שם': nameVal,
-      'טלפון': document.getElementById('phone').value.trim(),
-      'email': document.getElementById('email').value.trim(),
-      'סוג שירות': serviceSelect.options[serviceSelect.selectedIndex].text,
-      'תקציב משוער': budgetSelect.options[budgetSelect.selectedIndex].text,
-      'הודעה': document.getElementById('message').value.trim(),
-      '_subject': 'פנייה חדשה מהאתר - ' + nameVal,
-      '_template': 'table',
-      '_honey': ''
-    };
-
-    submitBtn.disabled = true;
-    const originalLabel = submitBtn.textContent;
-    submitBtn.textContent = 'שולח...';
-
-    try{
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json','Accept':'application/json'},
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json().catch(()=>({}));
-      if(!res.ok || data.success === 'false' || data.success === false) throw new Error(data.message || 'bad status');
-      form.reset();
-      successBox.textContent = 'תודה! הפנייה התקבלה, ואחזור אליך בהקדם.';
-      successBox.classList.add('show');
-    }catch(err){
-      successBox.innerHTML = 'השליחה לא הצליחה. אפשר לנסות שוב, או לכתוב ישירות ל-<a href="mailto:Tamardavidov.ugc@gmail.com" style="text-decoration:underline;">Tamardavidov.ugc@gmail.com</a>';
-      successBox.classList.add('show','error');
-      console.error('Form send failed:', err);
-    }finally{
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalLabel;
-    }
-  });
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('sent') === '1') {
+    successBox.textContent = 'תודה! הפנייה התקבלה, ואחזור אליך בהקדם.';
+    successBox.classList.add('show');
+    params.delete('sent');
+    const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + '#contact';
+    window.history.replaceState({}, '', cleanUrl);
+  }
 </script>
 
 </body>
