@@ -681,30 +681,30 @@
       </div>
     </div>
     <div class="contact-form-card">
-      <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+      <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" accept-charset="UTF-8">
         <input type="hidden" name="access_key" value="34f6d71a-8a30-4228-a4b9-f212c74a2b68">
-        <input type="hidden" name="subject" value="פנייה חדשה מהאתר של תמר">
-        <input type="hidden" name="from_name" value="אתר תמר דוידוב">
+        <input type="hidden" name="subject" value="New inquiry - Tamar Davidov website">
+        <input type="hidden" name="from_name" value="Tamar Davidov Website">
         <input type="hidden" name="redirect" value="https://tamardavidovsocial.co.il/?sent=1#contact">
         <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
         <div class="field-row">
           <div>
             <label for="name">שם מלא</label>
-            <input id="name" name="שם" type="text" placeholder="השם שלך" required>
+            <input id="name" name="Name" type="text" placeholder="השם שלך" required>
           </div>
           <div>
             <label for="phone">טלפון</label>
-            <input id="phone" name="טלפון" type="tel" placeholder="050-000-0000" required>
+            <input id="phone" name="Phone" type="tel" placeholder="050-000-0000" required>
           </div>
         </div>
         <div>
           <label for="email">אימייל</label>
-          <input id="email" name="email" type="email" placeholder="name@example.com" required>
+          <input id="email" name="Email" type="email" placeholder="name@example.com" required>
         </div>
         <div class="field-row">
           <div>
             <label for="service">סוג השירות המבוקש</label>
-            <select id="service" name="סוג שירות">
+            <select id="service" name="Service">
               <option value="">בחר/י אפשרות</option>
               <option value="ליווי לחתונה">ליווי לחתונה</option>
               <option value="סושיאל חינה/הפרשת חלה">סושיאל חינה/הפרשת חלה</option>
@@ -715,7 +715,7 @@
           </div>
           <div>
             <label for="budget">תקציב משוער</label>
-            <select id="budget" name="תקציב משוער">
+            <select id="budget" name="Budget">
               <option value="">בחר/י אפשרות</option>
               <option value="עד 1,000 ₪">עד 1,000 ₪</option>
               <option value="1,000–2,000 ₪">1,000–2,000 ₪</option>
@@ -725,7 +725,7 @@
         </div>
         <div>
           <label for="message">ספר לי על האירוע</label>
-          <textarea id="message" name="הודעה" placeholder="תאר/י את האירוע..."></textarea>
+          <textarea id="message" name="Message" placeholder="תאר/י את האירוע..."></textarea>
         </div>
         <button type="submit" class="submit-btn">שליחת פנייה</button>
         <p class="form-note">הפרטים נשלחים ישירות לתמר, ואף אחד אחר לא רואה אותם.</p>
@@ -774,8 +774,10 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'שולח...';
 
-    const data = new FormData(form);
-    data.delete('redirect'); // background send doesn't need the redirect
+    // Send as UTF-8 JSON so Hebrew text arrives readable in the email
+    const data = Object.fromEntries(new FormData(form));
+    delete data.redirect; // background send doesn't need the redirect
+    if (!data.botcheck) delete data.botcheck;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
@@ -783,8 +785,8 @@
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: data,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Accept': 'application/json' },
+        body: JSON.stringify(data),
         signal: controller.signal
       });
       const json = await res.json();
