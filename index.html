@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WM2F68FTJ8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-WM2F68FTJ8');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tamar Davidov | תמר דוידוב - צילום מוצר, סושיאל וקידום מותגים</title>
@@ -765,6 +773,7 @@
   const params = new URLSearchParams(window.location.search);
   if (params.get('sent') === '1') {
     showMessage('תודה! הפנייה התקבלה, ואחזור אליך בהקדם.');
+    if (typeof gtag === 'function') gtag('event', 'generate_lead');
     window.history.replaceState({}, '', window.location.pathname + '#contact');
   }
 
@@ -793,6 +802,7 @@
       if (!res.ok || !json.success) throw new Error(json.message || 'send failed');
       form.reset();
       showMessage('תודה! הפנייה התקבלה, ואחזור אליך בהקדם.');
+      if (typeof gtag === 'function') gtag('event', 'generate_lead');
     } catch (err) {
       // Background send failed: submit the normal way instead
       form.submit();
