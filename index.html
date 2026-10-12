@@ -775,25 +775,30 @@
           <label for="email">אימייל</label>
           <input id="email" name="Email" type="email" placeholder="name@example.com" required>
         </div>
+        <p class="form-note" id="service-hint" style="margin-bottom:-8px;">בחר/י את סוג השירות: סושיאל <strong>או</strong> צילום</p>
         <div class="field-row">
           <div>
-            <label for="service">סוג השירות המבוקש</label>
-            <select id="service" name="Service">
+            <label for="social">סוג הסושיאל המבוקש</label>
+            <select id="social" name="Social" aria-describedby="service-hint">
               <option value="">בחר/י אפשרות</option>
-              <option value="ליווי לחתונה">ליווי לחתונה</option>
-              <option value="סושיאל חינה/הפרשת חלה">סושיאל חינה/הפרשת חלה</option>
+              <option value="חתונה">חתונה</option>
+              <option value="ליווי חתונה בלייב">ליווי חתונה בלייב</option>
+              <option value="חינה">חינה</option>
+              <option value="הפרשת חלה">הפרשת חלה</option>
               <option value="בר/בת מצווה">בר/בת מצווה</option>
-              <option value="צילומי משפחה/הריון">צילומי משפחה/הריון</option>
-              <option value="צילומי זוגיות/Save the Date">צילומי זוגיות/Save the Date</option>
+              <option value="מסיבת גילוי מין העובר">מסיבת גילוי מין העובר</option>
+              <option value="Save the Date">Save the Date</option>
             </select>
           </div>
           <div>
-            <label for="budget">תקציב משוער</label>
-            <select id="budget" name="Budget">
+            <label for="photo">קטגוריית צילום</label>
+            <select id="photo" name="Photography" aria-describedby="service-hint">
               <option value="">בחר/י אפשרות</option>
-              <option value="עד 1,000 ₪">עד 1,000 ₪</option>
-              <option value="1,000–2,000 ₪">1,000–2,000 ₪</option>
-              <option value="3,000 ₪ ומעלה">3,000 ₪ ומעלה</option>
+              <option value="צילומי הריון">צילומי הריון</option>
+              <option value="צילומי גיל שנה/ילדים">צילומי גיל שנה/ילדים</option>
+              <option value="צילומי משפחה">צילומי משפחה</option>
+              <option value="צילומי זוגיות">צילומי זוגיות</option>
+              <option value="Save the Date">Save the Date</option>
             </select>
           </div>
         </div>
@@ -828,6 +833,12 @@
   const successBox = document.getElementById('form-success');
   const submitBtn = form.querySelector('.submit-btn');
 
+  // Social and Photography are mutually exclusive: picking one clears the other
+  const socialSel = document.getElementById('social');
+  const photoSel = document.getElementById('photo');
+  socialSel.addEventListener('change', () => { if (socialSel.value) photoSel.value = ''; });
+  photoSel.addEventListener('change', () => { if (photoSel.value) socialSel.value = ''; });
+
   function showMessage(text, isError){
     successBox.textContent = text;
     successBox.classList.remove('error');
@@ -852,6 +863,8 @@
     // Send as UTF-8 JSON so Hebrew text arrives readable in the email
     const data = Object.fromEntries(new FormData(form));
     delete data.redirect; // background send doesn't need the redirect
+    if (!data.Social) delete data.Social;
+    if (!data.Photography) delete data.Photography;
     if (!data.botcheck) delete data.botcheck;
 
     const controller = new AbortController();
